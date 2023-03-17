@@ -53,6 +53,16 @@
 <category><pattern>SHOW ME YOUR KB</pattern>
   <template>#5$</template></category>
 
+<!-- CNN European Detection -->
+<category>
+	<pattern> GIVE ME THE CLASS OF THIS IMAGE </pattern>
+	<template>#6$<star/></template>
+</category>
+<category>
+	<pattern> Give me an image</pattern>
+	<template><srai> what is this image? </srai></template>
+</category>
+
 
 <!-- Default reaction -->
 <category><pattern> * </pattern>
