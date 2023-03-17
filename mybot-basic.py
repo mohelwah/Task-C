@@ -161,7 +161,6 @@ while True:
                 print("No image selected.")
 
         elif cmd == 7:
-
             # select rundom file from Photos folder and return its path
             path = './Photos/Human'
 
@@ -178,19 +177,26 @@ while True:
 
                 # Display the image
                 image.show()
+                class_name, score = predict(imgPath)
+                print("this is example of EU President")
             else:
                 print("No image selected.")
     
         elif cmd == 8:
-            imgPath =  human_path[-1]
-            #get image name without extension
-            imgName = imgPath.split("/")[-1]
-            imgName = cleanNames(imgName.split(".")[0])
-            if(imgPath != ""):
-                class_name, score = predict(imgPath)
-                print("this is {} EU President - {} class with confidence percentage {} %".format(imgName, class_name, score))
+            if len(human_path) == 0:
+                print("Please select a presdint first")
+                continue
             else:
-                print("No image selected.")
+                imgPath =  human_path[-1]
+                #get image name without extension
+                imgName = imgPath.split("/")[-1]
+                imgName = cleanNames(imgName.split(".")[0])
+                imgName = imgName.split("\\")[-1]
+                if(imgPath != ""):
+                    class_name, score = predict(imgPath)
+                    print("this is {} EU President with confidence percentage {} %".format(imgName, score))
+                else:
+                    print("No image selected.")
     
         elif cmd == 9:
                         # select rundom file from Photos folder and return its path
@@ -209,22 +215,26 @@ while True:
 
                 # Display the image
                 image.show()
+                class_name, score = predict(imgPath)
+                print("this is example of a EU flag")
             else:
                 print("No image selected.")
   
         elif cmd == 10:
-            imgPath =  flag_path[-1]
-            #get image name without extension
-            imgName = imgPath.split("/")[-1]
-            imgName = cleanNames(imgName.split(".")[0])
-            if(imgPath != ""):
-                class_name, score = predict(imgPath)
-                print("this is {} flag - {} class with confidence percentage {} %".format(imgName, class_name, score))
+            if len(flag_path) == 0:
+                print("Please select a flag first")
+                continue
             else:
-                print("No image selected.")
+                imgPath =  flag_path[-1]
+                #get image name without extension
+                imgName = imgPath.split("/")[-1]
+                imgName = cleanNames(imgName.split(".")[0])
+                imgName = imgName.split("\\")[-1]
 
-
-
-
+                if(imgPath != ""):
+                    class_name, score = predict(imgPath)
+                    print("this is {} with confidence percentage {} %".format(imgName, score))
+                else:
+                    print("No image selected.")
     else:
         print(answer)
