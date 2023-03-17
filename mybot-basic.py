@@ -29,6 +29,8 @@ import aiml
 import json
 import csv
 import os
+import random
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # get rid of tensorflow errors
 import tkinter as tk
 from tkinter import filedialog
@@ -56,8 +58,37 @@ def cleanNames(name):
         name = name.replace(symbol, ' ')
     return name
 
+# predict function for CNN model
+def predict(imgPath):
+    img = tensor.keras.utils.load_img(imgPath, target_size = (180,180))
+    imgArray = tensor.keras.utils.img_to_array(img)
+    imgArray = tensor.expand_dims(imgArray, axis = 0)
+
+    # Use model to predict score
+    output = model.predict(imgArray)
+    score = tensor.nn.softmax(output[0])
+    class_names = ['Flag', 'Human']
+    return class_names[np.argmax(score)], 100 * np.max(score)
+
+#select random file from directory
+def select_random_file(directory):
+    # Get a list of all files in the directory
+    files = os.listdir(directory)
+
+    # Filter out directories and hidden files
+    files = [f for f in files if os.path.isfile(os.path.join(directory, f)) and not f.startswith('.')]
+
+    # Select a random file from the list
+    if len(files) > 0:
+        random_file = random.choice(files)
+        return os.path.join(directory, random_file)
+    else:
+        return None
 # Load EuropeanModel.h5 model
 model= tensor.keras.models.load_model("EuropeanModel.h5")
+
+human_path = []
+flag_path = []
 #######################################################
 #  Initialise CSV, regular expression and math libraries
 #######################################################
@@ -112,7 +143,7 @@ while True:
         elif cmd == 5:
 
             inference.inference_kb()  
-              
+
         elif cmd == 6:
             root = tk.Tk()
             root.filename = filedialog.askopenfilename(initialdir="test_data/",
@@ -123,21 +154,77 @@ while True:
             #get image name without extension
             imgName = imgPath.split("/")[-1]
             imgName = cleanNames(imgName.split(".")[0])
-
             if(imgPath != ""):
-                # Load selected image into correct format for model
-                img = tensor.keras.utils.load_img(imgPath, target_size = (180,180))
-                imgArray = tensor.keras.utils.img_to_array(img)
-                imgArray = tensor.expand_dims(imgArray, axis = 0)
-
-                # Use model to predict score
-                output = model.predict(imgArray)
-                score = tensor.nn.softmax(output[0])
-
-                # Output predicted class with confidence percentage
-                class_names = ['Flag', 'Human']
-                print("this is {} - {} class with confidence percentage {} %".format(imgName, class_names[np.argmax(score)], 100 * np.max(score)))
+                class_name, score = predict(imgPath)
+                print("this is {} - {} class with confidence percentage {} %".format(imgName, class_name, score))
             else:
                 print("No image selected.")
+
+        elif cmd == 7:
+
+            # select rundom file from Photos folder and return its path
+            path = './Photos/Human'
+
+            # get all files in the directory
+            imgPath =  select_random_file(path)
+            #get image name without extension
+            imgName = imgPath.split("/")[-1]
+            imgName = cleanNames(imgName.split(".")[0])
+            human_path.append(imgPath)
+
+            if(imgPath != ""):
+                # Open the image file
+                image = Image.open(imgPath)
+
+                # Display the image
+                image.show()
+            else:
+                print("No image selected.")
+    
+        elif cmd == 8:
+            imgPath =  human_path[-1]
+            #get image name without extension
+            imgName = imgPath.split("/")[-1]
+            imgName = cleanNames(imgName.split(".")[0])
+            if(imgPath != ""):
+                class_name, score = predict(imgPath)
+                print("this is {} EU President - {} class with confidence percentage {} %".format(imgName, class_name, score))
+            else:
+                print("No image selected.")
+    
+        elif cmd == 9:
+                        # select rundom file from Photos folder and return its path
+            path = './Photos/flag'
+
+            # get all files in the directory
+            imgPath =  select_random_file(path)
+            #get image name without extension
+            imgName = imgPath.split("/")[-1]
+            imgName = cleanNames(imgName.split(".")[0])
+            flag_path.append(imgPath)
+
+            if(imgPath != ""):
+                # Open the image file
+                image = Image.open(imgPath)
+
+                # Display the image
+                image.show()
+            else:
+                print("No image selected.")
+  
+        elif cmd == 10:
+            imgPath =  flag_path[-1]
+            #get image name without extension
+            imgName = imgPath.split("/")[-1]
+            imgName = cleanNames(imgName.split(".")[0])
+            if(imgPath != ""):
+                class_name, score = predict(imgPath)
+                print("this is {} flag - {} class with confidence percentage {} %".format(imgName, class_name, score))
+            else:
+                print("No image selected.")
+
+
+
+
     else:
         print(answer)

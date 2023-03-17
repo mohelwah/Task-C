@@ -55,12 +55,30 @@
 
 <!-- CNN European Detection -->
 <category>
-	<pattern> GIVE ME THE CLASS OF THIS IMAGE </pattern>
+	<pattern> WHAT IS THIS IMAGE? </pattern>
 	<template>#6$<star/></template>
 </category>
+
+
 <category>
-	<pattern> Give me an image</pattern>
-	<template><srai> what is this image? </srai></template>
+	<pattern> GIVE ME AN EU PRESIDENT </pattern>
+	<template>#7$<star/></template>
+</category>
+
+<category>
+	<pattern> WHO IS THIS </pattern>
+	<template>#8$<star/></template>
+</category>
+
+
+<category>
+	<pattern> GIVE ME A FLAG OF A MEMBER COUNTRY OF THE EU </pattern>
+	<template>#9$<star/></template>
+</category>
+
+<category>
+	<pattern> WHICH COUNTRY IS THIS? </pattern>
+	<template>#10$<star/></template>
 </category>
 
 
