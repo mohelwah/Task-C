@@ -1,0 +1,8 @@
+aimlbotkernel
+ipykernel
+ipython
+wikipedia
+matplotlib
+Pillow
+nltk
+pandas
