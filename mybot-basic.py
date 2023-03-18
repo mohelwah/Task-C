@@ -6,6 +6,7 @@ Basic chatbot design --- for your own modifications
 #######################################################
 import wikipedia
 import inference
+
 # Import matplotlip to show images
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -16,6 +17,7 @@ import matplotlib.image as mpimg
 import json, requests
 #insert your personal OpenWeathermap API key here if you have one, and want to use this feature
 APIkey = "5403a1e0442ce1dd18cb1bf7c40e776f" 
+
 
 #######################################################
 #  Initialise AIML agent
@@ -89,6 +91,16 @@ model= tensor.keras.models.load_model("EuropeanModel.h5")
 
 human_path = []
 flag_path = []
+
+
+
+
+
+#######################################################
+#  Initialise AIML agent
+#######################################################
+import aiml
+
 #######################################################
 #  Initialise CSV, regular expression and math libraries
 #######################################################
@@ -96,6 +108,113 @@ import csv
 import re
 import math
 
+questions = []
+answers = []
+
+#read question and answers csv file
+with open('Data.csv') as file:
+    reader = csv.reader(file, delimiter=',')
+    i = 0    
+    for row in reader:        
+        if i <= 1:
+            i += 1
+            continue
+        else:            
+            questions.append(row[0])
+            answers.append(row[1])
+
+#a module used to find word frequencies and term frequency
+def getWordFrequencies(question):    
+    words = re.findall(r"[^\W\d_]+|\d+", question)    
+    wordFrequency = {}
+    tD = {}    
+    
+    for word in words:
+        word = word.lower()
+        if(word in wordFrequency):
+            wordFrequency[word] += 1
+        else:
+            wordFrequency[word] = 1
+    
+    for word in words:
+        word = word.lower()
+        tD[word] = float(wordFrequency[word]) / float(len(words))
+            
+    return words, wordFrequency, tD
+#dot product
+def dotProduct(A, B):    
+    result = 0    
+    for word in A:
+        valB = 0
+        if(word in B):
+            valB = B[word]
+        result += (float(A[word]) * float(valB))
+    return result
+#Modulus
+def module(A):    
+    result = 0    
+    for word in A:
+        result += (float(A[word]) * float(A[word]))    
+    return math.sqrt(result)
+#compute cosine similatiry based on td-idf value
+def cosineSimilarity(tfidf1, tfidf2):
+    return (dotProduct(tfidf1, tfidf2) / (module(tfidf1) * module(tfidf2)))
+#find the closest related question and return the corresponding answer
+def getRelatedAnswer(inputQuestion):
+    
+    global questions
+    global answers
+
+    wordFrequencies = []
+    wordSplitDocuments = []
+    tDs = []
+    idf = {}
+    tfIdfs = []
+    
+    questions.append(inputQuestion)
+    
+    for question in questions:
+        
+        words, wordFrequency, tD = getWordFrequencies(question)
+        
+        wordSplitDocuments.append(words)
+        wordFrequencies.append(wordFrequency)
+        tDs.append(tD)
+    
+    for wordFrequency in wordFrequencies:
+        for word in wordFrequency:
+            if(word in wordFrequency and wordFrequency[word] > 0):
+                if(not word in idf):
+                    idf[word] = 1    
+                else:
+                    idf[word] += 1
+    #computing inverse document frequency  
+    for word in idf:
+        idf[word] = math.log(len(questions) / idf[word])
+    #computing td-idf
+    for tD in tDs:
+        tfidf = {}
+        for word in tD:
+            tfidf[word] = tD[word] * idf[word]
+        tfIdfs.append(tfidf)
+    
+    questions.pop()
+    tfIdf_expected = tfIdfs.pop()
+    
+    highestScore = 0
+    highestScoreIndex =-1
+    c = 0
+    for tfIdf in tfIdfs:
+        score = cosineSimilarity(tfIdf_expected, tfIdf)
+        if(score > highestScore):
+            highestScore = score
+            highestScoreIndex = c
+        c += 1
+            
+    if(highestScoreIndex == -1):
+        return None
+    
+    return answers[highestScoreIndex]
 
 # Create a Kernel object. No string encoding (all I/O is unicode)
 kern = aiml.Kernel()
@@ -132,7 +251,33 @@ while True:
         if cmd == 0:
             print(params[1])
             break
-       
+        elif cmd == 1:
+            try:
+                wSummary = wikipedia.summary(params[1], sentences=3,auto_suggest=False)
+                print(wSummary)
+            except:
+                print("Sorry, I do not know that. Be more specific!")
+        elif cmd == 2:
+            succeeded = False
+            api_url = r"http://api.openweathermap.org/data/2.5/weather?q="
+            response = requests.get(api_url + params[1] + r"&units=metric&APPID="+APIkey)
+            if response.status_code == 200:
+                response_json = json.loads(response.content)
+                if response_json:
+                    t = response_json['main']['temp']
+                    tmi = response_json['main']['temp_min']
+                    tma = response_json['main']['temp_max']
+                    hum = response_json['main']['humidity']
+                    wsp = response_json['wind']['speed']
+                    wdir = response_json['wind']['deg']
+                    conditions = response_json['weather'][0]['description']
+                    print("The temperature is", t, "°C, varying between", tmi, "and", tma, "at the moment, humidity is", hum, "%, wind speed ", wsp, "m/s,", conditions)
+                    succeeded = True
+            if not succeeded:
+                print("Sorry, I could not resolve the location you gave me.")
+        
+        # KNowledg base
+        
         elif cmd == 3:
             inference.inference_remember(params[1])
             
@@ -142,8 +287,7 @@ while True:
         
         elif cmd == 5:
 
-            inference.inference_kb()  
-
+            inference.inference_kb()    
         elif cmd == 6:
             root = tk.Tk()
             root.filename = filedialog.askopenfilename(initialdir="test_data/",
@@ -236,5 +380,25 @@ while True:
                     print("this is {} with confidence percentage {} %".format(imgName, score))
                 else:
                     print("No image selected.")
+    
+
+        elif cmd == 99:
+       
+            inputQuestion = userInput
+            #finding the closest related question and its corresponding answer
+            answer = getRelatedAnswer(inputQuestion)
+            if(answer == None):
+                print("I did not get that, please try again.")
+            #open image
+            elif answer == "*Photomap*":
+                img = mpimg.imread('EU_Map.jpg')
+                imgplot = plt.imshow(img)
+                plt.show()
+            elif answer =="*Photoflag*":
+                img = mpimg.imread('EU_Flag.jpeg')
+                imgplot = plt.imshow(img)
+                plt.show()
+            else:
+                print(answer)
     else:
         print(answer)

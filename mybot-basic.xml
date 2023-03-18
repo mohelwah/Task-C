@@ -40,6 +40,78 @@
 <category> <pattern> CHEERS * </pattern>
   <template>Sure mate.</template></category>
 
+
+<!-- Cosine Similarity -->
+<category><pattern> What does * </pattern>
+  <template>#99$<star/></template></category>
+
+<category><pattern> What is * </pattern>
+  <template><srai>What does<star/></srai></template></category>
+
+<category>
+  <pattern>Why was the EU created?</pattern>
+  <template>The EU represents one in a series of efforts to integrate Europe since World War II. At the end of the war, several western European countries sought closer economic, social, and political ties to achieve economic growth and military security and to promote a lasting reconciliation between France and Germany.</template>
+</category>
+
+<category>
+  <pattern>Why was the EU *</pattern>
+  <template><srai>Why was the EU created?</srai></template>
+</category>
+
+<category>
+  <pattern>Which countries first joined the EU?</pattern>
+  <template>In 1951, six countries founded the European Coal and Steel Community, and later, in 1957, the European Economic Community and the European Atomic Energy Community. These countries were Belgium, Germany, France, Italy, Luxembourg and the Netherlands.</template>
+</category>
+
+<category>
+  <pattern>Which countries *</pattern>
+  <template><srai>Which countries first joined the EU?</srai></template>
+</category>
+
+<category>
+  <pattern>Which currency is used in the EU? </pattern>
+  <template>There are nine currencies of the European Union as of 2020 used officially by member states. The euro accounts for the majority of the member states with the remainder operating independent monetary policies. </template>
+</category>
+
+<category>
+  <pattern>_ currency *</pattern>
+  <template><srai>Which currency is used in the EU?</srai> </template>
+</category>
+
+<category>
+  <pattern>Have any countries left the EU?</pattern>
+  <template>The UK is the only country to have ever left the EU.</template>
+</category>
+
+<category>
+  <pattern>Who left the EU *</pattern>
+  <template><srai>Have any countries left the EU?</srai></template>
+</category>
+
+<category>
+  <pattern>How many languages are spoken in the EU?</pattern>
+  <template>The EU has 24 official languages: Bulgarian, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, German, Greek, Hungarian, Irish, Italian, Latvian, Lithuanian, Maltese, Polish, Portuguese, Romanian, Slovak, Slovenian, Spanish and Swedish</template>
+</category>
+
+<category>
+  <pattern>* languages are spoken </pattern>
+  <template><srai>How many languages are spoken in the EU?</srai></template>
+</category>
+
+<category>
+  <pattern>What are the main institutions of the EU?</pattern>
+  <template>The main institutions are the European Parliament, the European Council and the European Commission.</template>
+</category>
+
+<category>
+  <pattern>_ institutions *</pattern>
+  <template><srai>What are the main institutions of the EU?</srai></template>
+</category>
+
+
+
+
+
 <!--- Knowledge base -->
 
 
