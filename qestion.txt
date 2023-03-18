@@ -1,4 +1,8 @@
 #correct
+Can you show me the flag of the EU?
+Can you show me a map of the EU?
+
+
 I know that Tim is British
 check that Tim is European
 What does EU stand for?
@@ -13,6 +17,8 @@ I know that UnitedKingdom is LocatedInEurope
 check that UnitedKingdom is LocatedInEurope
 check that France is European
 SHOW ME YOUR KB
+
+
 
 WHAT IS THIS IMAGE
 GIVE ME AN EU PRESIDENT
